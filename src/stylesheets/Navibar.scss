@@ -2,7 +2,6 @@
 @import "./_variables.scss";
 @import "./_breakpoints.scss";
 
-$height: 50px;
 $duration: 0.20s;
 
 
@@ -12,12 +11,12 @@ $duration: 0.20s;
 	top: 0;
 
 	width: 100%;
-  height: $height;
+	height: 50px;
 
 	padding: 0;
-  box-sizing: border-box;
+	box-sizing: border-box;
 
-	font-size: 1.5rem;
+	font-size: 1.3rem;
 
 	transition: background-color 0.30s ease 0s;
 
@@ -32,7 +31,10 @@ $duration: 0.20s;
 
 html:not([data-scroll="0"]) {
 	#Navibar {
-		background-color: rgba(0,0,0, 0.90);
+		background-color: black;
+		.nav-link {
+			color: white;
+		}
 
 		@include media-breakpoint-only(sm) {
 			background-color: black;
@@ -60,7 +62,7 @@ html:not([data-scroll="0"]) {
 }
 
 .brand {
-	height: $height;
+	height: 32px;
 	margin: 0 2rem;
 
 	@include media-breakpoint-only(sm) {
@@ -95,7 +97,7 @@ div.nav-link {
 	padding: 0;
 	text-align: center;
 
-	color: white;
+	color: black;
 	transition: color $duration ease 0s;
 
 	&:hover {

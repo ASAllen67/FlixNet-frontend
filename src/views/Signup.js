@@ -2,8 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import NodeRSA from 'node-rsa'
-import flixnet_logo from '../images/flixnet_logo.png'
-import { backend_api, public_key } from '../constants'
+import logo from '../images/logo.png'
+import { public_key } from '../constants'
+import { createUser } from '../api'
 import '../stylesheets/prelogin.scss'
 
 
@@ -13,36 +14,29 @@ class Signup extends React.Component {
 		errors: null
 	}
 
-	handleSignup = e => {
-		e.preventDefault()
+	handleSignup = event => {
+		event.preventDefault()
 
-		const form = e.target
+		const form = event.target
 		const lock = new NodeRSA(public_key)
-		let credentials = {
+		const credentials = {
 			username: lock.encrypt(form.username.value, 'base64'),
 			password: lock.encrypt(form.password.value, 'base64'),
 			confirm_password: lock.encrypt(form.confirm_password.value, 'base64'),
 		}
 
-		fetch(`${backend_api}/users`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json" 
-			},
-			body: JSON.stringify(credentials)
-		})
-		.then(res => res.json())
-		.then(res => {
-			if (res.errors) {
+		createUser(credentials)
+		.end((_, res) => {
+			const {errors, token, user} = res.body
+			if (errors) {
 				form.password.value = ""
 				form.confirm_password.value = ""
-				this.setState({ errors: res.errors })
+				this.setState({ errors: errors })
 			}
-			else if (res.token) {
-				localStorage.setItem("token", res.token)
+			else if (token) {
+				localStorage.setItem("token", token)
 				this.props.dispatch({ type: "LOG_IN" })
-				this.props.dispatch({ type: "SET_USER", user: res.user })
+				this.props.dispatch({ type: "SET_USER", user: user })
 			}
 		})
 	}
@@ -50,12 +44,12 @@ class Signup extends React.Component {
 	render() {
 		return (
 			<div id="Signup" className="pl-page">
-				<img className="pl-logo" src={flixnet_logo} draggable="false" alt="FlixNet Logo" />
+				<img className="pl-logo" src={logo} draggable="false" alt="Film Stash" />
 
 				<div className="pl-form-container">
 					<h1 className="pl-heading">Sign Up</h1>
 
-					{ this.state.errors && this.state.errors.map( (e, index) => <p className="signup-error" key={index}>{e}</p> )}
+					{ this.state.errors && this.state.errors.map((error, index) => <p className="signup-error" key={index}>{error}</p>)}
 
 					<form className="pl-form" onSubmit={this.handleSignup}>
 						<input className="pl-input top" required type="text" name="username" placeholder="Username" /><br/>

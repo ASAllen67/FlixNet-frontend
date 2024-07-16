@@ -4,7 +4,7 @@
 
 
 .movie-modal {
-	overflow-y: scroll;
+	overflow-y: auto;
 	text-align: center;
 	position: absolute;
 	top: 0;
@@ -22,7 +22,7 @@
 	color: white;
 	background-color: black;
 	border: 2px solid #E50A12;
-	border-radius: 0 24px 0 24px;
+	border-radius: 4px;
 
 	@include media-breakpoint-only(xs) {
 		top: 50px;
@@ -86,5 +86,22 @@
 
 	@include media-breakpoint-only(xs) {
 		margin-top: 5px;
+	}
+}
+
+.mm-text {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	svg {
+		font-size: 1.2rem;
+	}
+}
+
+.mm-genres {
+	margin-top: 12px;
+	& > div {
+		margin-right: 6px;
 	}
 }

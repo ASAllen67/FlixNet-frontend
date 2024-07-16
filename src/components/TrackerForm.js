@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { IoIosArrowForward } from 'react-icons/io'
-import { backend_api } from '../constants'
+import { IoChevronForwardOutline } from 'react-icons/io5'
+import { createEntry } from '../api'
 import '../stylesheets/TrackerForm.scss'
 
 
@@ -9,15 +9,10 @@ class TrackerForm extends React.Component {
 
 	state = {
 		hidden: true,
-
 		status: "",
-
-		hideScore: true,
-		score: "",
-
 		hideSubmit: true
 	}
-	baseState = this.state
+	defaultState = this.state
 
 	componentDidUpdate() {
 	  this.bottom.scrollIntoView({ behavior: "smooth" })
@@ -27,67 +22,31 @@ class TrackerForm extends React.Component {
 		if (this.state.hidden)
 			this.setState({ hidden: false })
 		else
-			this.setState(this.baseState)
+			this.setState(this.defaultState)
 	}
 
-	checkStatus = e => {
-		let status = e.target
-		let hideScore = true
-		let hideSubmit = true
-
-		if (status.value === "Completed")
-			hideScore = false
-		else if (status.value)
-			hideSubmit = false
-		
-		this.setState({ status: status.value, hideScore, hideSubmit })
+	checkStatus = event => {
+		const status = event.target
+		const hideSubmit = !status.value
+		this.setState({ status: status.value, hideSubmit })
 	}
 
-	checkScore = e => {
-		if (e.target.value)
-			this.setState({ score: e.target.value, hideSubmit: false })
-	}
+	handleSubmit = event => {
+		event.preventDefault()
 
-	handleSubmit = e => {
-		e.preventDefault()
-
-		const form = e.target
-		const m = this.props.movie
-
+		const eType = this.state.status.toLowerCase()
+		const movie = this.props.movie
 		const entry = {
-			title: m.title,
-			overview: m.overview,
-			poster_path: m.poster_path,
-			score: form.score.value,
-			tmdb_id: m.id
+			title: movie.title,
+			overview: movie.overview,
+			genre_ids: movie.genre_ids,
+			poster_path: movie.poster_path,
 		}
 
-		let url = backend_api
-		let type
-
-		if (this.state.status === "Completed") {
-			url += "/completed_entries"
-			type = "ADD_COMPLETED_ENTRY"
-		}
-		else {
-			url += "/backlog_entries"
-			type = "ADD_BACKLOG_ENTRY"
-		}
-
-		fetch(url, {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${localStorage.token}`,
-				"Content-Type": "application/json",
-				Accept: "application/json"
-			},
-			body: JSON.stringify({ entry })
-		})
-		.then(res => res.json())
+		createEntry(eType, movie.id, entry)
 		.then(res => {
-			if (res.entry) {
-				this.props.dispatch({ type, entry: res.entry })
-			}
+			if (res.body.entry)
+				this.props.dispatch({ type: "ADD_ENTRY", eType, id: movie.id, entry: res.body.entry })
 		})
 	}
 
@@ -98,29 +57,16 @@ class TrackerForm extends React.Component {
 
 				<form className="tracker-form" hidden={this.state.hidden} onSubmit={this.handleSubmit}>
 					<div className="tf-item-container">
-						&nbsp;<IoIosArrowForward/>&nbsp;
+						&nbsp;<IoChevronForwardOutline/>&nbsp;
 						<select name="status" className="tf-select" value={this.state.status} onChange={this.checkStatus} required>
 							<option disabled value="">Choose a status</option>
-							<option>Completed</option>
-							<option>Plan to Watch</option>
-						</select>
-					</div>
-
-					<div className="tf-item-container" hidden={this.state.hideScore}>
-						&nbsp;<IoIosArrowForward/>&nbsp;
-						<select name="score" className="tf-select" value={this.state.score} onChange={this.checkScore} required={!this.state.hideScore}>
-							<option disabled value="">Choose a score</option>
-							<option value="5">5 - Masterpiece</option>
-							<option value="4">4 - Great</option>
-							<option value="3">3 - Average</option>
-							<option value="2">2 - Mediocre</option>
-							<option value="1">1 - Appalling</option>
-							<option value="0">No score</option>
+							<option value="completed">Completed</option>
+							<option value="backlog">Plan to Watch</option>
 						</select>
 					</div>
 
 					<div className="tf-item-container" hidden={this.state.hideSubmit}>
-						&nbsp;<IoIosArrowForward/>&nbsp;
+						&nbsp;<IoChevronForwardOutline/>&nbsp;
 						<button className="tf-submit red-btn" type="submit">Add</button>
 					</div>
 				</form>

@@ -2,8 +2,9 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux'
 import NodeRSA from 'node-rsa'
-import flixnet_logo from '../images/flixnet_logo.png'
-import { backend_api, public_key } from '../constants'
+import logo from '../images/logo.png'
+import { public_key } from '../constants'
+import { createSession } from '../api'
 import '../stylesheets/prelogin.scss'
 
 
@@ -13,34 +14,27 @@ class Login extends React.Component {
 		error: null
 	}
 
-	handleLogin = e => {
-		e.preventDefault()
+	handleLogin = event => {
+		event.preventDefault()
 		
-		const form = e.target
-		const lock = new NodeRSA(public_key)
+		const form = event.target
+		const key = new NodeRSA(public_key)
 		const credentials = {
-			username: lock.encrypt(form.username.value, 'base64'),
-			password: lock.encrypt(form.password.value, 'base64')
+			username: key.encrypt(form.username.value, 'base64'),
+			password: key.encrypt(form.password.value, 'base64')
 		}
 
-		fetch(`${backend_api}/sessions`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Accept: "application/json" 
-			},
-			body: JSON.stringify(credentials)
-		})
-		.then(res => res.json())
-		.then(res => {
-			if (res.error) {
+		createSession(credentials)
+		.end((_, res) => {
+			const {error, token, user} = res.body
+			if (error) {
 				form.password.value = ""
-				this.setState({ error: res.error })
+				this.setState({ error: error })
 			}
-			else if (res.token) {
-				localStorage.setItem("token", res.token)
+			else if (token) {
+				localStorage.setItem("token", token)
 				this.props.dispatch({ type: "LOG_IN" })
-				this.props.dispatch({ type: "SET_USER", user: res.user })
+				this.props.dispatch({ type: "SET_USER", user: user })
 			}
 		})
 	}
@@ -48,7 +42,7 @@ class Login extends React.Component {
 	render() {
 		return (
 			<div id="Login" className="pl-page">
-				<img className="pl-logo" src={flixnet_logo} draggable="false" alt="FlixNet Logo" />
+				<img className="pl-logo" src={logo} draggable="false" alt="Film Stash" />
 
 				<div className="pl-form-container">
 					<h1 className="pl-heading">Log In</h1>

@@ -15,7 +15,8 @@ $duration: 0.20s;
 
 .mt-heading {
 	font-family: Helvetica;
-	margin-bottom: 20px;
+	font-size: 1.4rem;
+	margin: 32px 0 24px;
 }
 
 .mt-status-options {
@@ -48,7 +49,6 @@ $duration: 0.20s;
 	text-align: center;
 	font-size: 1.2rem;
 
-	color: white;
 	transition: color $duration ease 0s;
 
 	&:hover {
@@ -64,20 +64,21 @@ $duration: 0.20s;
 
 table.mt-table {
 	width: 90%;
-	margin: 50px auto 0;
+	margin: 0 auto;
 }
 
 .mt-table-title {
-	font-size: 1.4rem;
+	font-size: 1.2rem;
 }
 
 .mt-poster {
 	// maintain aspect ratio 2:3
-	width: 6vw; // 342px default
-	height: 9vw; // 513px default
+	min-width: 6vw; // 342px default
+	min-height: 9vw; // 513px default
 }
 
 .mt-overview {
+	text-align: left;
 
 	@include media-breakpoint-only(md) {
 		display: none;
@@ -93,24 +94,24 @@ table.mt-table {
 }
 
 .mt-heart {
-	transform: scale(2.6);
+	font-size: 2rem;
 	color: #E50A12;
 }
 
 .mt-heart-click {
 	cursor: pointer;
-	transform: scale(2);
+	font-size: 2rem;
 	&:hover { color: #E50A12; }
 }
 
 .mt-delete {
 	cursor: pointer;
-	transform: scale(2.4);
+	font-size: 2rem;
 	&:hover { color: #E50A12; }
 }
 
 .mt-check {
 	cursor: pointer;
-	transform: scale(2);
+	font-size: 2rem;
 	&:hover { color: #00D65F; }
 }

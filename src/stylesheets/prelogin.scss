@@ -8,9 +8,9 @@
 	min-width: 100vw;
 
 	background: linear-gradient(
-		rgba(0, 0, 0, 0.50), 
+		rgba(0, 0, 0, 0.60), 
 		rgba(0, 0, 0, 0.50) 
-	), url("../images/netflix_bg.jpeg");
+	), url("../images/background.png");
 
 	@include media-breakpoint-only(xs) {
 		background: black;
@@ -18,12 +18,12 @@
 }
 
 .pl-logo {
-	margin: 20px 20px 0;
-	height: 70px;
+	margin: 18px 18px 12px;
+	height: 48px;
 
 	@include media-breakpoint-only(xs) {
-		margin: 5px 5px 0;
-		height: 45px;
+		margin: 10px;
+		height: 34px;
 	}
 }
 
@@ -53,9 +53,9 @@
 
 	width: 450px;
 	max-width: 100vw;
-	padding: 60px 70px 40px;
+	padding: 50px 60px 40px;
 
-	background-color: rgba(0,0,0, 0.75);
+	background-color: #000;
 	border-radius: 4px;
 
 	@include media-breakpoint-only(xs) {

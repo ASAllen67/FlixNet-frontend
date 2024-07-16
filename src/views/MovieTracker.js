@@ -1,19 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import CompletedTable from '../components/CompletedTable'
-import BacklogTable from '../components/BacklogTable'
-import FavoriteTable from '../components/FavoriteTable'
+import MovieTable from '../components/MovieTable'
 import '../stylesheets/MovieTracker.scss'
 
 class MovieTracker extends React.Component {
 
 	state = {
-		status: "completed_entries"
+		status: "completed"
 	}
 
 	getHeader = ()=> {
 		let message, grammar
-		let count = this.props.user[this.state.status].length
+		let count = Object.keys(this.props.user[this.state.status]).length
 
 		if (count === 1) {
 			count += " movie"
@@ -25,7 +23,7 @@ class MovieTracker extends React.Component {
 		}
 
 		switch(this.state.status) {
-			case "backlog_entries":
+			case "backlog":
 				message = `There ${grammar} ${count} in your Backlog`
 			break;
 
@@ -38,7 +36,7 @@ class MovieTracker extends React.Component {
 			break;
 		}
 
-		return <h1 className="mt-heading">{message}</h1>
+		return <div className="mt-heading">{message}</div>
 	}
 
 	getOptions = ()=> {
@@ -47,15 +45,15 @@ class MovieTracker extends React.Component {
 		const entry_types = [
 			{
 				name: "Completed",
-				status: "completed_entries"
+				status: "completed",
 			},
 			{
 				name: "Backlog",
-				status: "backlog_entries"
+				status: "backlog",
 			},
 			{
 				name: "Favorites",
-				status: "favorites"
+				status: "favorites",
 			}
 		]
 
@@ -72,22 +70,18 @@ class MovieTracker extends React.Component {
 	}
 
 	getTable = ()=> {
-		const movies = this.props.user[this.state.status]
-		if (movies.length === 0)
+		const entries = this.props.user[this.state.status]
+		if (Object.keys(entries).length === 0)
 			return null
-		else if (this.state.status === "completed_entries")
-			return <CompletedTable/>
-		else if (this.state.status === "backlog_entries")
-			return <BacklogTable/>
 		else
-			return <FavoriteTable/>
+			return <MovieTable type={this.state.status}/>
 	}
 
 	render() {
 		return (
 			<div id="MovieTracker">
-				{ this.getHeader() }
 				{ this.getOptions() }
+				{ this.getHeader() }
 				{ this.getTable() }
 			</div>
 		)

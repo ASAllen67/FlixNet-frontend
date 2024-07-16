@@ -43,7 +43,11 @@
 
 .tf-item-container {
 	display: inline-block;
-	
+
+	svg {
+		font-size: 1.3rem;
+	}
+
 	@include media-breakpoint-only(md) {
 		margin: 10px 0;
 		display: block;

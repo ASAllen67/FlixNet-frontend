@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux'
-import { backend_api } from './constants'
+import { healthCheck, getUser } from './api'
 import ReactLoading from 'react-loading'
 import Login from './views/Login'
 import Signup from './views/Signup'
@@ -18,29 +18,26 @@ class App extends React.Component {
 
 	componentDidMount() {
 		if (this.props.loggedIn) {
-			fetch(`${backend_api}/user`, {
-				headers: { Authorization: `Bearer ${localStorage.token}` }
-			})
-			.then(res => res.json())
+			getUser()
 			.then(res => {
 				this.setState({ loading: false })
-				if (res.user)
-					this.props.dispatch({ type: "SET_USER", user: res.user })
-				else
-					this.props.dispatch({ type: "LOG_OUT" })
+				const user = res.body.user
+				if (user) this.props.dispatch({ type: "SET_USER", user })
+				else this.props.dispatch({ type: "LOG_OUT" })
 			})
-			.catch(error => this.props.dispatch({ type: "LOG_OUT" }) )
+			.catch(() => this.props.dispatch({ type: "LOG_OUT" }))
 		}
 		else {
-			fetch(backend_api)
-			.then(res => this.setState({ loading: false }))
+			healthCheck()
+			.then(() => this.setState({ loading: false }))
+			.catch(() => setTimeout(() => window.location.reload(), 15000))
 		}
 	}
 
 	loading = () => (
 		<div className="loading">
 			<ReactLoading type="bars" color="#E50A12" height="20%" width="20%" />
-			<div>Waking up Heroku database</div>
+			<div>Waking up database</div>
 		</div>
 	)
 
